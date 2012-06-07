@@ -135,6 +135,29 @@ var GordonUploadScreenshot = {
   }
 }
 
+var imgur = {
+  addFormFields: function(formdata)
+  {
+    formdata.addControl("key", "2ac20aaffaf68967306be2a03ca2bef7");
+  },
+  
+  getFileFormField: function()
+  {
+    return "image";
+  },
+  
+  getReferer: function()
+  {
+    return "http://imgur.com/";
+  },
+  
+  getSubmissionURL: function()
+  {
+    return "http://api.imgur.com/2/upload";
+  }
+}
+
 Providers.addProvider(GordonUploadScreenshot);
+Providers.addProvider(imgur);
 //Providers.addProvider(ImageShack);
 //Providers.addProvider(AllYouCanUpload);
