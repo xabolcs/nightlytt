@@ -33,6 +33,8 @@ init: function()
 
   tabbrowser.updateTitlebar = nightly.updateTitlebar;
   tabbrowser.addEventListener("DOMTitleChanged", nightly.updateTitlebar, false);
+
+  Components.utils.import("resource://nightly/browserUIWidget.jsm");
 },
 
 openURL: function(url)

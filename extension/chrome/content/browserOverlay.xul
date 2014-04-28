@@ -116,4 +116,12 @@
     </menu>
   </vbox>
   
+  <!-- for CustomizableUI -->
+  <panelmultiview id="PanelUI-multiView">
+    <panelview id="nightly-PanelUI" flex="1">
+      <label value="Nightly Tester Tools" class="panel-subview-header"/>
+      <vbox id="nighlty-PanelUI-items" class="panel-subview-body"/>
+    </panelview>
+  </panelmultiview>
+
 </overlay>

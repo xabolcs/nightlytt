@@ -13,3 +13,13 @@ toolbar[iconsize="small"] #nightly-tester-enter {
 .popup-notification-icon[popupid="nightly-compatibility-restart"] {
   list-style-image: url("chrome://nightly/content/brand/logo.png");
 }
+
+/* Added for Australis support */
+#nightlyWidget-button {
+  list-style-image: url("chrome://nightly/content/brand/icon16.png");
+}
+
+#nightlyWidget-button[cui-areatype="menu-panel"],
+toolbarpaletteitem[place="palette"] > #nightlyWidget-button {
+  list-style-image: url("chrome://nightly/content/brand/icon.png");
+}
