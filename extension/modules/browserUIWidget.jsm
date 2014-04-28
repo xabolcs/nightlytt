@@ -6,6 +6,8 @@
 
 const {classes: Cc, interfaces: Ci, utils: Cu} = Components;
 
+this.EXPORTED_SYMBOLS = [];
+
 Cu.import("resource:///modules/CustomizableUI.jsm");
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 
@@ -82,6 +84,9 @@ CustomizableUI.createWidget({
     let menu = doc.getElementById("nightly-menu").firstChild;
 
     let itemsToDisplay = [...menu.children];
+
+    win.nightly.menuPopup({target: menu}, menu);
+
     fillSubviewFromMenuItems(itemsToDisplay, doc.getElementById("nighlty-PanelUI-items"));
 
   },
