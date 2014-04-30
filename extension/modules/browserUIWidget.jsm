@@ -8,42 +8,47 @@ const {classes: Cc, interfaces: Ci, utils: Cu} = Components;
 
 this.EXPORTED_SYMBOLS = [];
 
-Cu.import("resource:///modules/CustomizableUI.jsm");
-Cu.import("resource://gre/modules/XPCOMUtils.jsm");
+try {
+  Cu.import("resource:///modules/CustomizableUI.jsm");
+} catch (e) {
+  // No Australis, nothing to do here
+}
 
-let {
-    fillSubviewFromMenuItems, clearSubview
-  } = Cu.import("resource:///modules/CustomizableWidgets.jsm",{});
+if (typeof CustomizableUI !== "undefined") {
+  Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 
-let nightlyWidget = {
-  id: "nightlyWidget-button",
-  type: "view",
-  viewId: "nightly-PanelUI",
-  tooltiptext: "Nightly Tester Tools",
-  defaultArea: CustomizableUI.AREA_PANEL,
-  label: "Nightly Tester Tools"
-};
+  Cu.import("resource://nightly/CustomizableUIWidgetHelpers.jsm");
 
-nightlyWidget.onViewShowing = function(aEvent) {
-  // Populate the subview with whatever menuitems are in the developer
-  // menu. We skip menu elements, because the menu panel has no way
-  // of dealing with those right now.
-  let doc = aEvent.target.ownerDocument;
-  let win = doc.defaultView;
+  let nightlyWidget = {
+    id: "nightlyWidget-button",
+    type: "view",
+    viewId: "nightly-PanelUI",
+    tooltiptext: "Nightly Tester Tools",
+    defaultArea: CustomizableUI.AREA_PANEL,
+    label: "Nightly Tester Tools"
+  };
 
-  let menu = doc.getElementById("nightly-menu").firstChild;
+  nightlyWidget.onViewShowing = function(aEvent) {
+    // Populate the subview with whatever menuitems are in the developer
+    // menu. We skip menu elements, because the menu panel has no way
+    // of dealing with those right now.
+    let doc = aEvent.target.ownerDocument;
+    let win = doc.defaultView;
 
-  let itemsToDisplay = [...menu.children];
+    let menu = doc.getElementById("nightly-menu").firstChild;
 
-  win.nightly.menuPopup({target: menu}, menu);
+    let itemsToDisplay = [...menu.children];
 
-  fillSubviewFromMenuItems(itemsToDisplay, doc.getElementById("nightly-PanelUI-items"));
-};
+    win.nightly.menuPopup({target: menu}, menu);
 
-nightlyWidget.onViewHiding = function(aEvent) {
-  let doc = aEvent.target.ownerDocument;
-  clearSubview(doc.getElementById("nightly-PanelUI-items"));
-};
+    fillSubviewFromMenuItems(itemsToDisplay, doc.getElementById("nightly-PanelUI-items"));
+  };
+
+  nightlyWidget.onViewHiding = function(aEvent) {
+    let doc = aEvent.target.ownerDocument;
+    clearSubview(doc.getElementById("nightly-PanelUI-items"));
+  };
 
 
-CustomizableUI.createWidget(nightlyWidget);
+  CustomizableUI.createWidget(nightlyWidget);
+}
