@@ -6,7 +6,7 @@
 
 const {classes: Cc, interfaces: Ci, utils: Cu} = Components;
 
-this.EXPORTED_SYMBOLS = ["fillSubviewFromMenuItems", "clearSubview"];
+this.EXPORTED_SYMBOLS = ["fillSubviewFromMenuItems", "clearSubview", "linearizeMenuPopup"];
 
 Cu.import("resource:///modules/CustomizableUI.jsm");
 
@@ -64,4 +64,46 @@ let clearSubview = importedClearSubview || function (aSubview) {
   }
 
   parent.appendChild(aSubview);
+}
+
+function linearizeMenuPopup(aMenuPopup) {
+  if (!aMenuPopup) {
+    return aMenuPopup;
+  }
+
+  let doc = aMenuPopup.ownerDocument;
+
+  let resultMenuPopup = aMenuPopup.cloneNode(true);
+  let elementsToAdd = [];
+
+  let idx = -1;
+  for (let element of resultMenuPopup.childNodes) {
+    idx++;
+    if (element.localName == "menu") {
+      elementsToAdd.push({original: aMenuPopup.childNodes[idx], current: element});
+    }
+  }
+
+  for (let {original, current} of elementsToAdd) {
+    let slimMenuPopup = linearizeMenuPopup(original.firstChild);
+    if (!slimMenuPopup) {
+      continue;
+    }
+
+    if (current.previousSibling.localName !== "menuseparator") {
+      current.parentNode.insertBefore(doc.createElementNS(kNSXUL, "menuseparator"), current);
+    }
+
+    while (slimMenuPopup.firstChild) {
+      current.parentNode.insertBefore(slimMenuPopup.firstChild, current);
+    };
+
+    if (current.nextSibling.localName !== "menuseparator") {
+      current.parentNode.insertBefore(doc.createElementNS(kNSXUL, "menuseparator"), current);
+    }
+
+    current.parentNode.removeChild(current);
+  }
+
+  return resultMenuPopup;
 }

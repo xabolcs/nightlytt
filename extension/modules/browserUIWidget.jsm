@@ -14,45 +14,6 @@ try {
   // No Australis, nothing to do here
 }
 
-function linearizeMenuPopup(aMenuPopup) {
-  if (!aMenuPopup) {
-    return aMenuPopup;
-  }
-
-  let doc = aMenuPopup.ownerDocument;
-  const kNSXUL = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
-
-  let resultMenuPopup = aMenuPopup.cloneNode(true);
-  let elementsToAdd = [];
-
-  let idx = -1;
-  for (let element of resultMenuPopup.childNodes) {
-    idx++;
-    if (element.localName == "menu") {
-      elementsToAdd.push({original: aMenuPopup.childNodes[idx], current: element});
-    }
-  }
-
-  for (let {original, current} of elementsToAdd) {
-    let slimMenuPopup = linearizeMenuPopup(original.menupopup);
-    if (!slimMenuPopup) {
-      continue;
-    }
-
-    current.parentNode.insertBefore(doc.createElementNS(kNSXUL, "menuseparator"), current);
-
-    while (slimMenuPopup.firstChild) {
-      current.parentNode.insertBefore(slimMenuPopup.firstChild, current);
-    };
-
-    current.parentNode.insertBefore(doc.createElementNS(kNSXUL, "menuseparator"), current);
-
-    current.parentNode.removeChild(current);
-  }
-
-  return resultMenuPopup;
-}
-
 if (typeof CustomizableUI !== "undefined") {
   Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 
@@ -74,7 +35,7 @@ if (typeof CustomizableUI !== "undefined") {
     let doc = aEvent.target.ownerDocument;
     let win = doc.defaultView;
 
-    let nightlyMenu = doc.getElementById("nightly-menu").menupopup;
+    let nightlyMenu = doc.getElementById("nightly-menu").firstChild;
     win.nightly.menuPopup({target: nightlyMenu}, nightlyMenu);
 
     let menu = linearizeMenuPopup(nightlyMenu);
